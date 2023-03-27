@@ -36,12 +36,27 @@ public class ContaService {
         return contaRepository.getContaById(id);
     }
 
-    public List<Conta> updateConta(Integer id, Conta updatedConta) {
-        contaRepository.updateConta(id, updatedConta);
+    public List<Conta> updateConta(Integer id, Double novoSaldo) {
+        Conta conta = contaRepository.getContaById(id);
+        conta.setSaldo(novoSaldo);
+        contaRepository.updateConta(id, conta);
         return getAllContas();
     }
 
     public boolean deleteConta(Integer id) {
         return contaRepository.deleteContaById(id);
+    }
+
+    public String tranferirValor(Integer idRemetente, Integer idReceptor, Double valor) {
+        Conta conta = contaRepository.getContaById(idRemetente);
+        Conta contaReceptora = contaRepository.getContaById(idReceptor);
+
+        if (conta.sacar(valor)) {
+            contaReceptora.depositar(valor);
+            return ("{\"saldoContaRemetente\": " + conta.getSaldo() + ", \"saldoContaReceptora\": " + contaReceptora.getSaldo() + "}");
+        } else {
+            return "Saldo insuficiente";
+        }
+
     }
 }

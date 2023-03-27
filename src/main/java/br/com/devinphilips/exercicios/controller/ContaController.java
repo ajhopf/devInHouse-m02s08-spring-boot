@@ -11,11 +11,9 @@ import java.util.List;
 @RestController
 public class ContaController {
     private final ContaService service;
-    private final ClienteService clienteService;
 
     public ContaController(ContaService service, ClienteService clienteService) {
         this.service = service;
-        this.clienteService = clienteService;
     }
 
     @GetMapping
@@ -28,16 +26,25 @@ public class ContaController {
         return service.getContaById(id);
     }
 
-    @PostMapping(params="clienteId")
+    @PostMapping(params = "clienteId")
     public boolean addConta(@RequestParam Integer clienteId) {
         return service.addConta(clienteId);
     }
 
-    @PutMapping
+    @PutMapping(params = {"id", "novoSaldo"})
     public List<Conta> atualizarConta(
             @RequestParam Integer id,
-            @RequestBody Conta conta) {
-        return service.updateConta(id, conta);
+            @RequestParam Double novoSaldo) {
+        return service.updateConta(id, novoSaldo);
+    }
+
+    @PutMapping(params = {"idRemetente", "idReceptor", "valor"})
+    public String transferirValor(
+            @RequestParam Integer idRemetente,
+            @RequestParam Integer idReceptor,
+            @RequestParam Double valor) {
+
+        return service.tranferirValor(idRemetente, idReceptor, valor);
     }
 
     @DeleteMapping("/{id}")
